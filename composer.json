@@ -11,5 +11,17 @@
       "email": "ing.andres.carmona@gmail.com"
     }
   ],
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Polaris\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Polaris\\SpotifyApiServiceProvider"
+      ]
+    }
+  }
 }
