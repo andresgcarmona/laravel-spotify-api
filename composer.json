@@ -1,0 +1,15 @@
+{
+  "name": "polaris/laravel-spotify-api",
+  "description": "A PHP library wrapper for Spotify's Web API.",
+  "require": {
+    "guzzlehttp/guzzle": "^6.3@dev"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andres G. Carmona",
+      "email": "ing.andres.carmona@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev"
+}
