@@ -2,7 +2,9 @@
   "name": "polaris/laravel-spotify-api",
   "description": "A PHP library wrapper for Spotify's Web API.",
   "require": {
-    "guzzlehttp/guzzle": "^6.3@dev"
+    "guzzlehttp/guzzle": "^6.3@dev",
+    "nesbot/carbon": "dev-master",
+    "ext-json": "*"
   },
   "license": "MIT",
   "authors": [
