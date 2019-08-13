@@ -14,7 +14,6 @@
          */
         public function boot()
         {
-            //
         }
 
         /**
@@ -26,9 +25,12 @@
         {
             $this->app->singleton(SpotifyApi::class, function ($app)
             {
-                $client = new Client();
+                $client       = new Client();
+                $clientId     = config('services.spotify.client_id');
+                $clientSecret = config('services.spotify.client_secret');
+                $redirectUrl  = config('services.spotify.redirect_url');
 
-                return new SpotifyApi($client);
+                return new SpotifyApi($client, $clientId, $clientSecret, $redirectUrl);
             });
         }
     }
