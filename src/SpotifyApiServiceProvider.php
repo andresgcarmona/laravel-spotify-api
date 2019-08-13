@@ -27,7 +27,10 @@
 
             $this->app->singleton(SpotifyApi::class, function ($app) use ($client)
             {
-                return new SpotifyApi($client);
+                // Get SpotifyAccount from Service Container.
+                $accountClient = $app->make(SpotifyAccount::class);
+
+                return new SpotifyApi($client, $accountClient);
             });
 
             $this->app->singleton(SpotifyAccount::class, function () use ($client)
