@@ -16,8 +16,8 @@
      */
     class SpotifyAccount
     {
-        const ACCOUNT_URL  = 'https://accounts.spotify.com';
-        const SESSION_NAME = 'spotify_session';
+        protected const ACCOUNT_URL  = 'https://accounts.spotify.com';
+        protected const SESSION_NAME = 'spotify_session';
 
         /**
          * Holds a references to Guzzle client object.
@@ -47,20 +47,90 @@
          */
         protected $redirectUrl;
 
+        /**
+         * Spotify's access token.
+         *
+         * @var string
+         */
         protected $accessToken;
 
+        /**
+         * Spotify's refresh token.
+         *
+         * @var string
+         */
         protected $refreshToken;
 
+        /**
+         * Expiration time in seconds.
+         *
+         * @var int
+         */
         protected $expirationTime;
 
+        /**
+         * Array of scopes that were granted by the user.
+         *
+         * @var array.
+         */
         protected $grantedScopes;
 
+        /**
+         * SpotifyAccount constructor.
+         *
+         * @param  Client  $client
+         * @param  string  $clientId
+         * @param  string  $clientSecret
+         * @param  string  $redirectUrl
+         */
         public function __construct(Client $client, string $clientId, string $clientSecret, string $redirectUrl)
         {
             $this->client       = $client;
             $this->clientId     = $clientId;
             $this->clientSecret = $clientSecret;
             $this->redirectUrl  = $redirectUrl;
+        }
+
+        /**
+         * Returns access token.
+         *
+         * @return string
+         */
+        public function getAccessToken(): string
+        {
+            return $this->accessToken;
+        }
+
+        /**
+         * Returns refresh token.
+         *
+         * @return string
+         */
+        public function getRefreshToken(): string
+        {
+            return $this->refreshToken;
+        }
+
+        /**
+         * Returns expiration time.
+         *
+         * @return int
+         */
+        public function getExpirationTime(): string
+        {
+            return $this->expirationTime;
+        }
+
+        /**
+         * Returns the authentication header that is need to perform further requests.
+         *
+         * @return array
+         */
+        public function getAuthHeaders(): array
+        {
+            return [
+                'Authentication' => 'Bearer '.$this->getAccessToken(),
+            ];
         }
 
         /**
