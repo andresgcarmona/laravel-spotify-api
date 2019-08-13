@@ -17,7 +17,6 @@
     class SpotifyAccount
     {
         protected const ACCOUNT_URL  = 'https://accounts.spotify.com';
-        protected const SESSION_NAME = 'spotify_session';
 
         /**
          * Holds a references to Guzzle client object.
@@ -129,6 +128,7 @@
         public function getAuthHeaders(): array
         {
             return [
+                'Accept'         => 'application/json',
                 'Authentication' => 'Bearer '.$this->getAccessToken(),
             ];
         }
@@ -139,7 +139,7 @@
          * @return RedirectResponse
          * @throws SpotifyAuthException
          */
-        public function requestAccessCode(): RedirectResponse
+        public function requestAccessCode(?string $state = null): RedirectResponse
         {
             // Get scopes from services config file. Pass default if config not provided.
             $scopes = urlencode(implode(' ', config('services.spotify.scopes', [
@@ -157,7 +157,7 @@
                 'redirect_uri'  => $this->redirectUrl,
                 'show_dialog'   => $showDialog,
                 'scopes'        => $scopes,
-                'state'         => Str::random(),
+                'state'         => $state ?? Str::random(),
             ];
 
             return redirect()->to($this->getRequestAccessCodeUrl($params));
@@ -196,9 +196,6 @@
                     $this->expirationTime = $response->expires_in;
                     $this->grantedScopes  = $response->scopes ?? [];
                 }
-
-                // Save response in session.
-                session(self::SESSION_NAME, $response);
 
                 return $response;
             } catch (RequestException $exception) {
