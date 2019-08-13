@@ -23,14 +23,20 @@
          */
         public function register()
         {
-            $this->app->singleton(SpotifyApi::class, function ($app)
+            $client = new Client();
+
+            $this->app->singleton(SpotifyApi::class, function ($app) use ($client)
             {
-                $client       = new Client();
+                return new SpotifyApi($client);
+            });
+
+            $this->app->singleton(SpotifyAccount::class, function () use ($client)
+            {
                 $clientId     = config('services.spotify.client_id');
                 $clientSecret = config('services.spotify.client_secret');
                 $redirectUrl  = config('services.spotify.redirect_url');
 
-                return new SpotifyApi($client, $clientId, $clientSecret, $redirectUrl);
+                return new SpotifyAccount($client, $clientId, $clientSecret, $redirectUrl);
             });
         }
     }
