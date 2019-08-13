@@ -4,6 +4,7 @@
 
     use GuzzleHttp\Client;
     use Illuminate\Http\RedirectResponse;
+    use Illuminate\Support\Collection;
     use Polaris\Exceptions\SpotifyAuthException;
 
     /**
@@ -45,12 +46,23 @@
         }
 
         /**
+         * Returns the accountClient object.
+         *
+         * @return SpotifyAccount
+         */
+        public function getAccountClient(): SpotifyAccount
+        {
+            return $this->accountClient;
+        }
+
+        /**
          * Wrapper around account object. Simplifies calls from end user.
          *
+         * @param  string  $state
          * @return RedirectResponse
-         * @throws Exceptions\SpotifyAuthException
+         * @throws SpotifyAuthException
          */
-        public function requestAccessCode(): RedirectResponse
+        public function requestAccessCode(string $state): RedirectResponse
         {
             return $this->accountClient->requestAccessCode();
         }
@@ -75,18 +87,35 @@
          */
         public function me()
         {
-            // Try to get access token first from memory and then from session.
-            $accessToken = $this->accountClient->getAccessToken() ?? session('spotify_session')->access_token;
+            // Validate access token first.
+            if($this->accountClient->validateAccessToken()) {
+                // Return json decode response.
+                return $this->json(
+                    $this->client->get(self::API_URL.'/me', $this->accountClient->getAuthHeaders())
+                );
+            }
+        }
 
-            // If no access token found, then raise exception.
-            if (!$accessToken) {
-                throw new SpotifyAuthException('Invalid access token provided.');
+        /**
+         * Returns recently played collection of tracks.
+         *
+         * @return Collection
+         * @throws SpotifyAuthException
+         */
+        public function recentlyPlayed(): Collection
+        {
+            // Validate access token first.
+            if($this->accountClient->validateAccessToken()) {
+                // Return json decode response.
+                return collect(
+                    $this->json(
+                        $this->client->get(self::API_URL.'/me/player/recently-played',
+                            $this->accountClient->getAuthHeaders())
+                    )
+                );
             }
 
-            // Return json decode response.
-            return $this->json(
-                $this->client->get(self::API_URL.'/me', $this->accountClient->getAuthHeaders())
-            );
+            return collect();
         }
 
         /**
@@ -97,6 +126,7 @@
          */
         public function json($response)
         {
+            // Return json decode response.
             return json_decode($response, false);
         }
     }
