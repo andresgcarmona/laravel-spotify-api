@@ -91,7 +91,9 @@
             if($this->accountClient->validateAccessToken()) {
                 // Return json decode response.
                 return $this->json(
-                    $this->client->get(self::API_URL.'/me', $this->accountClient->getAuthHeaders())
+                    $this->client->get(self::API_URL.'/me', [
+                        'headers' => $this->accountClient->getAuthHeaders(),
+                    ])
                 );
             }
         }
@@ -109,8 +111,9 @@
                 // Return json decode response.
                 return collect(
                     $this->json(
-                        $this->client->get(self::API_URL.'/me/player/recently-played',
-                            $this->accountClient->getAuthHeaders())
+                        $this->client->get(self::API_URL.'/me/player/recently-played', [
+                            'headers' => $this->accountClient->getAuthHeaders(),
+                        ])
                     )
                 );
             }
@@ -127,6 +130,6 @@
         public function json($response)
         {
             // Return json decode response.
-            return json_decode($response, false);
+            return json_decode((string) $response->getBody(), false);
         }
     }
