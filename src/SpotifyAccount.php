@@ -113,7 +113,7 @@
          */
         public function getAccessToken(): ?string
         {
-            return $this->accessToken ?? session(self::SESSION_NAME) ? session(self::SESSION_NAME)->access_token : null;
+            return $this->accessToken ?? (session(self::SESSION_NAME) ? session(self::SESSION_NAME)->access_token : null);
         }
 
         /**
@@ -121,9 +121,9 @@
          *
          * @return string
          */
-        public function getRefreshToken(): string
+        public function getRefreshToken(): ?string
         {
-            return $this->refreshToken ?? session(self::SESSION_NAME) ? session(self::SESSION_NAME)->refresh_token : null;
+            return $this->refreshToken ?? (session(self::SESSION_NAME) ? session(self::SESSION_NAME)->refresh_token : null);
         }
 
         /**
@@ -144,8 +144,8 @@
         public function getAuthHeaders(): array
         {
             return [
-                'Accept'         => 'application/json',
-                'Authentication' => 'Bearer '.$this->getAccessToken(),
+                'Accept'        => 'application/json',
+                'Authorization' => 'Bearer '.$this->getAccessToken(),
             ];
         }
 
@@ -158,21 +158,21 @@
         public function requestAccessCode(?string $state = null): RedirectResponse
         {
             // Get scopes from services config file. Pass default if config not provided.
-            $scopes = urlencode(implode(' ', config('services.spotify.scopes', [
+            $scopes = implode(' ', config('services.spotify.scopes', [
                 'user-read-recently-played',
                 'user-read-private',
                 'user-read-email',
                 'user-library-read',
-            ])));
+            ]));
 
-            $showDialog = config('services.spotify.show_dialog', false);
+            $showDialog = (bool) config('services.spotify.show_dialog', false);
 
             $params = [
                 'response_type' => 'code',
                 'client_id'     => $this->clientId,
                 'redirect_uri'  => $this->redirectUrl,
                 'show_dialog'   => $showDialog,
-                'scopes'        => $scopes,
+                'scope'         => $scopes,
                 'state'         => $state ?? Str::random(),
             ];
 
@@ -222,7 +222,12 @@
         public function refreshAccessToken()
         {
             // Get access token from memory or from session.
-            $refreshToken = $this->refreshToken ?? $this->getAccessTokenSession()->refresh_token;
+            $refreshToken = $this->refreshToken ?? ($this->getAccessTokenSession() ? $this->getAccessTokenSession()->refresh_token : null);
+
+            // If refresh token is not accesible from memory or session, then get token from database.
+            if(auth()->check()) {
+                $refreshToken = user()->refresh_token;
+            }
 
             // If refresh token is null or not isset throw an exception.
             if (!$refreshToken) {
@@ -264,7 +269,7 @@
             $accessTokenSession = $this->getAccessTokenSession();
 
             return $accessTokenSession && Carbon::createFromTimestamp($accessTokenSession->expires_at)
-                                                ->lte(Carbon::now());
+                                                ->gt(Carbon::now());
         }
 
         /**
@@ -313,6 +318,6 @@
             }
 
             // Save response in session.
-            session(self::SESSION_NAME, $response);
+            session([self::SESSION_NAME => $response]);
         }
     }
