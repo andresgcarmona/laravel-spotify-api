@@ -4,7 +4,8 @@
   "require": {
     "guzzlehttp/guzzle": "^6.3@dev",
     "nesbot/carbon": "^2.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "polaris/laravel-entity": "dev-master"
   },
   "require-dev": {
     "laravel/framework": "^6.0@dev"
@@ -17,11 +18,22 @@
     }
   ],
   "minimum-stability": "dev",
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
   "autoload": {
     "psr-4": {
       "Polaris\\": "src/"
     }
   },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../laravel-entity"
+    }
+  ],
   "extra": {
     "laravel": {
       "providers": [
