@@ -4,7 +4,7 @@
 
     use GuzzleHttp\Client;
     use Illuminate\Http\RedirectResponse;
-    use Illuminate\Support\Collection;
+    use Polaris\Entities\Collections\RecentlyPlayedCollection;
     use Polaris\Exceptions\SpotifyAuthException;
 
     /**
@@ -88,7 +88,7 @@
         public function me()
         {
             // Validate access token first.
-            if($this->accountClient->validateAccessToken()) {
+            if ($this->accountClient->validateAccessToken()) {
                 // Return json decode response.
                 return $this->json(
                     $this->client->get(self::API_URL.'/me', [
@@ -101,21 +101,22 @@
         /**
          * Returns recently played collection of tracks.
          *
-         * @return Collection
+         * @return RecentlyPlayedCollection
          * @throws SpotifyAuthException
          */
-        public function recentlyPlayed(): Collection
+        public function recentlyPlayed(): RecentlyPlayedCollection
         {
             // Validate access token first.
-            if($this->accountClient->validateAccessToken()) {
-                // Return json decode response.
-                return collect(
-                    $this->json(
-                        $this->client->get(self::API_URL.'/me/player/recently-played', [
-                            'headers' => $this->accountClient->getAuthHeaders(),
-                        ])
-                    )
+            if ($this->accountClient->validateAccessToken()) {
+                // Get recently played tracks.
+                $recentlyPlayed = $this->json(
+                    $this->client->get(self::API_URL.'/me/player/recently-played', [
+                        'headers' => $this->accountClient->getAuthHeaders(),
+                    ])
                 );
+
+                // Convert to RecentlyPlayedCollection and return it.
+                return new RecentlyPlayedCollection($recentlyPlayed);
             }
 
             return collect();
