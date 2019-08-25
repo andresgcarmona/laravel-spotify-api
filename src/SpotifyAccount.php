@@ -123,7 +123,7 @@
          */
         public function getRefreshToken(): ?string
         {
-            return $this->refreshToken ?? (session(self::SESSION_NAME) ? session(self::SESSION_NAME)->refresh_token : null);
+            return $this->refreshToken ?? (session(self::SESSION_NAME) && isset(session(self::SESSION_NAME)->refresh_token) ? session(self::SESSION_NAME)->refresh_token : null);
         }
 
         /**
@@ -222,7 +222,7 @@
         public function refreshAccessToken()
         {
             // Get access token from memory or from session.
-            $refreshToken = $this->refreshToken ?? ($this->getAccessTokenSession() ? $this->getAccessTokenSession()->refresh_token : null);
+            $refreshToken = $this->refreshToken ?? $this->getRefreshToken();
 
             // If refresh token is not accesible from memory or session, then get token from database.
             if(auth()->check()) {
