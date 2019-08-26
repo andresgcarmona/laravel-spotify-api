@@ -46,15 +46,14 @@
         /**
          * RecentlyPlayedCollection constructor.
          *
-         * @param  array  $data
+         * @param  mixed  $data
          */
-        public function __construct(array $data = [])
+        public function __construct($data = [])
         {
-            // Assign extra information.
-            $this->cursors  = $data['cursors'] ?? null;
-            $this->next     = $data['next'] ?? null;
-            $this->previous = $data['previous'] ?? null;
-            $this->href     = $data['href'] ?? null;
+            // Normalize data as array.
+            if ($data instanceof \stdClass) {
+                $data = json_decode(json_encode($data), true);
+            }
 
             parent::__construct($data);
         }
