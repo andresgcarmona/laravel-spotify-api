@@ -2,6 +2,7 @@
 
     namespace Polaris\Entities;
 
+    use Polaris\Entities\Collections\ArtistsCollection;
     use Polaris\Entity;
 
     class Track extends Entity
@@ -13,7 +14,7 @@
          */
         protected $casts = [
             'album'   => Album::class,
-            // 'artists' => ArtistsCollection::class,
+            'artists' => ArtistsCollection::class,
         ];
 
         /**

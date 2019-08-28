@@ -5,6 +5,7 @@
     use GuzzleHttp\Client;
     use Illuminate\Http\RedirectResponse;
     use Polaris\Entities\Collections\RecentlyPlayedCollection;
+    use Polaris\Entities\RecentlyPlayed;
     use Polaris\Exceptions\SpotifyAuthException;
 
     /**
@@ -101,10 +102,10 @@
         /**
          * Returns recently played collection of tracks.
          *
-         * @return RecentlyPlayedCollection
+         * @return RecentlyPlayed
          * @throws SpotifyAuthException
          */
-        public function recentlyPlayed(): RecentlyPlayedCollection
+        public function recentlyPlayed(): RecentlyPlayed
         {
             // Validate access token first.
             if ($this->accountClient->validateAccessToken()) {
@@ -115,8 +116,10 @@
                     ])
                 );
 
+                dump($recentlyPlayed->items[0]);
+
                 // Convert to RecentlyPlayedCollection and return it.
-                return new RecentlyPlayedCollection($recentlyPlayed);
+                return new RecentlyPlayed($recentlyPlayed);
             }
 
             return collect();
