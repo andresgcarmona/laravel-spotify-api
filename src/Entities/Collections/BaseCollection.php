@@ -16,34 +16,6 @@
         protected $entity;
 
         /**
-         * Stores the cursor information (For pagination purposes.
-         *
-         * @var
-         */
-        protected $cursors;
-
-        /**
-         * Holds the next url, to get the next results from server. Timestamp based.
-         *
-         * @var
-         */
-        protected $next;
-
-        /**
-         * Holds the previous url, to get the previous results from server. Timestamp based.
-         *
-         * @var
-         */
-        protected $previous;
-
-        /**
-         * The url from where this collection is going to get the results.
-         *
-         * @var
-         */
-        protected $href;
-
-        /**
          * RecentlyPlayedCollection constructor.
          *
          * @param  mixed  $data
